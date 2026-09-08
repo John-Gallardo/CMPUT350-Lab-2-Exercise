@@ -146,7 +146,8 @@ struct Bullet : public sf::Drawable {
         //      - bullet is off screen (use shape.getPosition() and
         //        WINDOW_WIDTH and WINDOW_HEIGHT)
         sf::Vector2f currPosition{shape.getPosition()};
-        currPosition -= velocity;
+        currPosition -= (velocity * (1.0f / 60.0f));  // moves way too fast without this speed factor
+        shape.setPosition(currPosition);
         lifetime -= 1.0f / 60.0f;
         bool inBounds{currPosition.x < WINDOW_WIDTH && currPosition.x > 0 && currPosition.y < WINDOW_HEIGHT && currPosition.y > 0};
         if (lifetime <= 0.0f || !inBounds) {
@@ -258,7 +259,7 @@ public:
         static sf::Time prevTimeFired{};
         sf::Time currTimeFired{mShootClock.getElapsedTime()};
         if (shootingDesired && currTimeFired.asSeconds() > prevTimeFired.asSeconds() + SHOOT_COOLDOWN) {
-            Bullet bullet{mSpaceship.getPosition(), inputSummary.movementDirection};  // TODO: not sure if this is the correct velocity
+            Bullet bullet{mSpaceship.getPosition(), -facingVector};  // negative bec. it shoots from behind otherwise
             mBullets.push_back(bullet);
             prevTimeFired = currTimeFired;
         }
