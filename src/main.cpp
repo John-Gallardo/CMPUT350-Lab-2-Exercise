@@ -325,7 +325,7 @@ private:
         for (auto& asteroid : mAsteroids) {
             if (!asteroid.isAlive) continue;
             // =====
-            // TODO: Use Circle-Circle intersection test (circlesIntersect)
+            // Use Circle-Circle intersection test (circlesIntersect)
             // to determine if the spaceship's hitbox collides with an asteroid.
             // If so, kill the asteroid and play an explosion sound.
             bool collides{circlesIntersect(mSpaceship.getPosition(), mSpaceship.hitboxRadius(), asteroid.shape.getPosition(), asteroid.shape.getRadius())};
