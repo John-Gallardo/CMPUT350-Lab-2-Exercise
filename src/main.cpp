@@ -147,9 +147,8 @@ struct Bullet : public sf::Drawable {
         //        WINDOW_WIDTH and WINDOW_HEIGHT)
         sf::Vector2f currPosition{shape.getPosition()};
         currPosition -= velocity;
-        lifetime -= 1.0f / 60.0f;  
-
-        bool inBounds{currPosition.x > WINDOW_WIDTH || currPosition.x < 0 || currPosition.y < 0 || currPosition.y > WINDOW_HEIGHT};
+        lifetime -= 1.0f / 60.0f;
+        bool inBounds{currPosition.x < WINDOW_WIDTH && currPosition.x > 0 && currPosition.y < WINDOW_HEIGHT && currPosition.y > 0};
         if (lifetime <= 0.0f || !inBounds) {
             isAlive = false;
         }
@@ -353,6 +352,13 @@ private:
         // =====
         // TODO: What should we do with dead bullet objects? Just keep them lying around taking up
         // space in memory?
+        std::vector<Bullet> newBullets{};
+        for (auto &bullet : mBullets) {
+            if (bullet.isAlive) {
+                newBullets.push_back(bullet);
+            }
+        }
+        mBullets.swap(newBullets);
     }
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
