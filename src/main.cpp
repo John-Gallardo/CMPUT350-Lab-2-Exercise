@@ -247,6 +247,15 @@ public:
         //  - Bullet direction is the same as the spaceship's facing direction.
         //  - Bullet should be shot from the current spaceship position.
 
+        bool shootingDesired{inputSummary.shootingDesired};
+        static sf::Time prevTimeFired{};
+        sf::Time currTimeFired{mShootClock.getElapsedTime()};
+        if (shootingDesired && currTimeFired.asSeconds() > prevTimeFired.asSeconds() + SHOOT_COOLDOWN) {
+            Bullet bullet{mSpaceship.getPosition(), {0.0f, 0.0f}};
+            mBullets.push_back(bullet);
+            prevTimeFired = currTimeFired;
+        }
+
         // --- Update Asteroids ---
         for (auto& asteroid : mAsteroids) {
             asteroid.update();
