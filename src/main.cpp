@@ -311,7 +311,7 @@ private:
                                      asteroid.shape.getPosition(), asteroid.shape.getRadius())) {
                     bullet.isAlive = false;
                     asteroid.isAlive = false;
-                    // TODO: Add Explosion Sound Effect
+                    // Add Explosion Sound Effect
                     // Play explosion sound!
                     mExplosionSound.play();
 
@@ -328,6 +328,11 @@ private:
             // TODO: Use Circle-Circle intersection test (circlesIntersect)
             // to determine if the spaceship's hitbox collides with an asteroid.
             // If so, kill the asteroid and play an explosion sound.
+            bool collides{circlesIntersect(mSpaceship.getPosition(), mSpaceship.hitboxRadius(), asteroid.shape.getPosition(), asteroid.shape.getRadius())};
+            if (collides) {
+                asteroid.isAlive = false;
+                mExplosionSound.play();
+            }
         }
     }
 
@@ -351,7 +356,7 @@ private:
 
     void cleanupDeadBullets() {
         // =====
-        // TODO: What should we do with dead bullet objects? Just keep them lying around taking up
+        // What should we do with dead bullet objects? Just keep them lying around taking up
         // space in memory?
         std::vector<Bullet> newBullets{};
         for (auto &bullet : mBullets) {
