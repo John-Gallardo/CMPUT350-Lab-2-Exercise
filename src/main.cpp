@@ -138,13 +138,21 @@ struct Bullet : public sf::Drawable {
 
     void update() {
         // =====
-        // TODO: Implement bullet update mechanics. In detail:
+        // Implement bullet update mechanics. In detail:
         //  - Move bullet's shape using bullet's velocity
         //  - Decrease bullet lifetime by 1.0f / 60.0f (60 FPS)
         //  - Mark bullets as dead (bullet.isAlive = false) if:
         //      - lifetime <= 0.0f, or
         //      - bullet is off screen (use shape.getPosition() and
         //        WINDOW_WIDTH and WINDOW_HEIGHT)
+        sf::Vector2f currPosition{shape.getPosition()};
+        currPosition -= velocity;
+        lifetime -= 1.0f / 60.0f;  
+
+        bool inBounds{currPosition.x > WINDOW_WIDTH || currPosition.x < 0 || currPosition.y < 0 || currPosition.y > WINDOW_HEIGHT};
+        if (lifetime <= 0.0f || !inBounds) {
+            isAlive = false;
+        }
     }
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
@@ -242,7 +250,7 @@ public:
         mSpaceship.setRotation(sf::radians(angleRadians + M_PI / 2));
         // --- Shooting ---
         // =====
-        // TODO: Implement shooting mechanics, keeping in mind the shooting cooldown. In detail:
+        // Implement shooting mechanics, keeping in mind the shooting cooldown. In detail:
         //  - Consider whether the user wants to shoot, and also the cooldown.
         //  - Bullet direction is the same as the spaceship's facing direction.
         //  - Bullet should be shot from the current spaceship position.
@@ -251,7 +259,7 @@ public:
         static sf::Time prevTimeFired{};
         sf::Time currTimeFired{mShootClock.getElapsedTime()};
         if (shootingDesired && currTimeFired.asSeconds() > prevTimeFired.asSeconds() + SHOOT_COOLDOWN) {
-            Bullet bullet{mSpaceship.getPosition(), {0.0f, 0.0f}};
+            Bullet bullet{mSpaceship.getPosition(), inputSummary.movementDirection};  // TODO: not sure if this is the correct velocity
             mBullets.push_back(bullet);
             prevTimeFired = currTimeFired;
         }
@@ -305,6 +313,7 @@ private:
                     asteroid.isAlive = false;
                     // TODO: Add Explosion Sound Effect
                     // Play explosion sound!
+                    mExplosionSound.play();
 
                     break;  // Bullet can only hit one asteroid
                 }
